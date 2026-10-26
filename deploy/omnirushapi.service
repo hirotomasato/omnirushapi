@@ -1,0 +1,39 @@
+# systemd unit for a bare-metal install.
+#
+#   sudo useradd --system --home /opt/omnirushapi --shell /usr/sbin/nologin omnirushapi
+#   sudo git clone https://github.com/hirotomasato/omnirushapi.git /opt/omnirushapi
+#   cd /opt/omnirushapi && sudo -u omnirushapi npm ci
+#   sudo install -m 600 -o omnirushapi -g omnirushapi /dev/null /opt/omnirushapi/.env   # then edit it
+#   sudo cp deploy/omnirushapi.service /etc/systemd/system/
+#   sudo systemctl enable --now omnirushapi
+
+[Unit]
+Description=omnirushapi — OpenAI- and Anthropic-compatible gateway
+Documentation=https://github.com/hirotomasato/omnirushapi
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=omnirushapi
+Group=omnirushapi
+WorkingDirectory=/opt/omnirushapi
+EnvironmentFile=-/opt/omnirushapi/.env
+ExecStart=/usr/bin/node --import tsx src/index.ts
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+
+# The gateway needs nothing but its own directory and the network.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+ReadWritePaths=/opt/omnirushapi/data
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

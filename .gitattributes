@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+*.svg text
+*.png binary
+*.db binary
+*.db-shm binary
+*.db-wal binary
+
+package-lock.json -diff linguist-generated

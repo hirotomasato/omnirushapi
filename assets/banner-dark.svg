@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-label="omnirushapi — one OpenAI- and Anthropic-compatible endpoint in front of many upstream accounts">
+  <title>omnirushapi</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12151d"/>
+      <stop offset="1" stop-color="#0c0e13"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b95ff"/>
+      <stop offset="1" stop-color="#5b52e8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="360" rx="28" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="1279" height="359" rx="27.5" fill="none" stroke="#242a36"/>
+  <g transform="translate(72,124)">
+    <rect width="112" height="112" rx="30" fill="url(#mark)"/>
+    <path d="M34 80V32l44 48V32" fill="none" stroke="#0c0e13" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="228" y="194" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="66" font-weight="700" letter-spacing="-1.6" fill="#eceef4">omnirushapi</text>
+  <text x="230" y="240" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="25" fill="#9aa4b4">One endpoint in front of many upstream accounts</text>
+  <line x1="230" y1="272" x2="1208" y2="272" stroke="#242a36"/>
+  <text x="230" y="306" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" fill="#6f7889">OpenAI + Anthropic compatible · round-robin · failover · SQLite</text>
+</svg>

@@ -1,0 +1,29 @@
+# `docker compose up -d`, then open http://127.0.0.1:8787/dashboard.
+#
+# Set DASHBOARD_PASSWORD in the environment (or a .env file next to this one) before starting:
+# the placeholder is refused unless the gateway listens on loopback only.
+
+services:
+  gateway:
+    build: .
+    image: omnirushapi:local
+    container_name: omnirushapi
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"
+    environment:
+      ROUTING: ${ROUTING:-round-robin}
+      MAX_ATTEMPTS: ${MAX_ATTEMPTS:-3}
+      DASHBOARD_USER: ${DASHBOARD_USER:-admin}
+      # Required on purpose: the console is reachable from outside the container here, and the
+      # gateway refuses to start behind the placeholder password.
+      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD:?set DASHBOARD_PASSWORD before starting the gateway}
+      # Upstream calls go through this proxy when set; loopback upstreams stay direct.
+      UPSTREAM_PROXY: ${UPSTREAM_PROXY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      # Holds the account credentials, the client keys and the admin token.
+      - gateway-data:/data
+
+volumes:
+  gateway-data:

@@ -1,0 +1,50 @@
+{
+  "name": "omnirushapi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted gateway that puts one OpenAI- and Anthropic-compatible endpoint in front of many upstream accounts, with round-robin routing, failover, a console, a CLI and an admin API.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env --import tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "gateway": "node --env-file-if-exists=.env --import tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
+    "e2e": "node --import tsx test/e2e/run.ts",
+    "check": "npm run typecheck && npm test && npm run e2e"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "fastify": "^5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22",
+    "tsx": "^4",
+    "typescript": "^5"
+  },
+  "license": "MIT",
+  "author": "hirotomasato",
+  "homepage": "https://github.com/hirotomasato/omnirushapi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hirotomasato/omnirushapi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hirotomasato/omnirushapi/issues"
+  },
+  "keywords": [
+    "ai-gateway",
+    "openai-compatible",
+    "anthropic",
+    "llm",
+    "proxy",
+    "round-robin",
+    "fastify",
+    "sqlite",
+    "self-hosted"
+  ]
+}

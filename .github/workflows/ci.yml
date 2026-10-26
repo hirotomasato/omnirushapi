@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22", "24"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run e2e
+
+  container:
+    # The Dockerfile is part of how this ships, so it is built and smoke-tested here rather
+    # than only by whoever happens to have a daemon running.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t omnirushapi:ci .
+      - name: Start it and wait for health
+        run: |
+          docker run -d --name gateway -p 127.0.0.1:8787:8787 \
+            -e DASHBOARD_PASSWORD=ci-console-password omnirushapi:ci
+          for _ in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8787/healthz >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8787/healthz
+      - name: The console answers, and a client call is refused without a key
+        run: |
+          # The console is behind a session: unauthenticated it answers with the login form.
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8787/dashboard)" = "401"
+          curl -s http://127.0.0.1:8787/dashboard | grep -q "Sign in to the admin console"
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:8787/v1/chat/completions \
+            -H 'content-type: application/json' -d '{"model":"x","messages":[]}')
+          test "$code" = "401"
+      - name: It refuses to expose the console behind the placeholder password
+        run: |
+          if docker run --rm -e HOST=0.0.0.0 omnirushapi:ci 2>&1 | tee /tmp/refusal; then
+            echo "it started with the placeholder password on 0.0.0.0"; exit 1
+          fi
+          grep -q "placeholder" /tmp/refusal
+      - if: always()
+        run: docker logs gateway || true
