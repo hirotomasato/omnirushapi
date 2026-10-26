@@ -13,6 +13,10 @@ data/
 !.env.example
 *.log
 
+# Source archives built for upload
+*.zip
+*.tar.gz
+
 .DS_Store
 .idea/
 .vscode/
